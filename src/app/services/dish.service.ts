@@ -6,10 +6,12 @@ import { DISHES } from '../shared/dishes';
 import { Dish } from '../shared/dish';
 import { baseURL } from '../shared/baseurl';
 import { ProcessHttpmsgService } from './process-httpmsg.service';
+import { RestangularConfigFactory } from '../shared/restConfig';
 
+import { RestangularModule, Restangular } from 'ngx-restangular';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +19,11 @@ import { map } from 'rxjs/operators';
 
 export class DishService {
 
-  constructor(private http: HttpClient) {}
+  constructor(/*private http: HttpClient,*/ private restangular: Restangular, private processHttpmsgService: ProcessHttpmsgService) {}
 
     getDishes(): /*Promise*/Observable<Dish[]> {
-        /*(HTTP)*/ return this.http.get<Dish[]>(baseURL + 'dishes');
+        /*Restangular*/ return this.restangular.all('dishes').getList().pipe(catchError(error => error));
+        /*HTTP*/ //return this.http.get<Dish[]>(baseURL + 'dishes');
         /*Observable*/ //return of(DISHES).pipe(delay(2000));
         /*Promise*/ /*return new Promise(resolve => {
         //Simulate server latency with 2 second delay
@@ -29,7 +32,8 @@ export class DishService {
     }
 
     getDish(id: number): /*Promise*/Observable<Dish> {
-        /*HTTP*/ return this.http.get<Dish>(baseURL + 'dishes/' + id);
+        /*Restangular*/ return this.restangular.one('dishes', id).get().pipe(catchError(error => error));
+        /*HTTP*/ //return this.http.get<Dish>(baseURL + 'dishes/' + id);
         /*Observable*/ //return of(DISHES.filter((dish) => (dish.id === id))[0]).pipe(delay(2000));
         /*Promise*/ /*return new Promise(resolve => {
          //Simulate server latency with 2 second delay
@@ -38,7 +42,8 @@ export class DishService {
     }
 
     getFeaturedDish(): /*Promise*/Observable<Dish> {
-        /*HTTP*/ return this.http.get<Dish[]>(baseURL + 'dishes?featured=true').pipe(map(dishes => dishes[0]));
+        /*Restangular*/ return this.restangular.all('dishes').getList({featured: true}).pipe(map(dishes => dishes[0])).pipe(catchError(error => error));
+        /*HTTP*/ //return this.http.get<Dish[]>(baseURL + 'dishes?featured=true').pipe(map(dishes => dishes[0]));
         /*Observable*/ //return of(DISHES.filter((dish) => dish.featured)[0]).pipe(delay(2000));
         /*Promise*/ /*return new Promise(resolve => {
         //Simulate server latency with 2 second delay
@@ -46,8 +51,8 @@ export class DishService {
       });*/
     }
 
-  getDishIds(): Observable<number[]> {
-    /*HTTP*/ return this.getDishes().pipe(map(dishes => dishes.map(dish => dish.id)));
+  getDishIds(): Observable<number[] | any> {
+    /*HTTP*/ return this.getDishes().pipe(map(dishes => dishes.map(dish => dish.id))).pipe(catchError(error => error));
     /*Observable*/ //return of(DISHES.map(dish => dish.id ));
   }
 }
