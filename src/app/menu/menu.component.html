@@ -1,27 +1,32 @@
-<div class="container"
-     fxLayout="column"
-     fxLayoutGap="10px">
-
-     <div fxFlex>
+<div class="container" fxLayout="column" fxLayoutGap="10px">
+    <div fxFlex *ngIf="dishes">
         <div>
-          <h3>Menu</h3>
-          <hr>
+            <h3>Menu</h3>
+            <hr>
         </div>
-      </div>
+    </div>
 
-      <div *ngIf="dishes" fxFlex>
-          <mat-grid-list cols="2" rowHeight="200px">
-              <mat-grid-tile *ngFor="let dish of dishes" [routerLink]="['/dishdetail',dish.id]" (click) = "onSelect(dish)">
-                  <img height="200px" src={{dish.image}} alt={{dish.name}}>
-                  <mat-grid-tile-footer mat-button>
+    <div fxFlex>
+        <mat-grid-list cols="2" rowHeight="200px">
+            <mat-grid-tile *ngFor="let dish of dishes" [routerLink]="['/dishdetail', dish.id]" appHighlight>
+
+                <img height="200px" src="{{BaseURL + dish.image}}" alt={{dish.name}}>
+                <mat-grid-tile-footer mat-button>
                       <!--uppercase (built-in angular pipe) pipe transforms the text to upper case-->
                       <a mat-button mat-line>{{ dish.name | uppercase }}</a>
-                  </mat-grid-tile-footer>
-                </mat-grid-tile>
-          </mat-grid-list>
-      </div>
-      <div [hidden]="dishes">
-        <mat-spinner></mat-spinner><h4>Loading...Please Wait!</h4>
-      </div>
-      <!--app-dishdetail [dish] = "selectedDish"></app-dishdetail-->
+                </mat-grid-tile-footer>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </div>
+
+</div>
+
+<div [hidden]="dishes || errMess">
+    <mat-spinner></mat-spinner>
+    <h4>Loading . . . Please Wait</h4>
+</div>
+
+<div *ngIf="errMess">
+    <h2>Error</h2>
+    <h4>{{errMess}}</h4>
 </div>
