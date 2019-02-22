@@ -1,16 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { Feedback, ContactType } from '../shared/feedback';
+import { flyInOut, expand } from '../animations/app.animation';
+
+import { FeedbackService } from '../services/feedback.service';
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.scss']
+  styleUrls: ['./contact.component.scss'],
+  host: {
+    '[@flyInOut]': 'true',
+    'style': 'display: block;'
+  },
+  animations: [
+    flyInOut(),
+    expand()
+  ]
 })
-
 export class ContactComponent implements OnInit {
+
   feedbackForm: FormGroup;
   feedback: Feedback;
+  feedbackConfirm: Feedback;
+  submitFlag = false;
+  confirmFlag = false;
   contactType = ContactType;
 
   formErrors = {
@@ -41,13 +56,15 @@ export class ContactComponent implements OnInit {
     },
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+    private feedbackservice: FeedbackService) {
     this.createForm();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
-  createForm(): void {
+  createForm() {
     this.feedbackForm = this.fb.group({
       firstname: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)] ],
       lastname: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)] ],
@@ -57,32 +74,37 @@ export class ContactComponent implements OnInit {
       contacttype: 'None',
       message: ''
     });
-    this.feedbackForm.valueChanges.subscribe(data => this.onValueChanged(data));
-    this.onValueChanged(); //(re)set form validation messages
+
+    this.feedbackForm.valueChanges
+    .subscribe(data => this.onValueChanged(data));
+
+    this.onValueChanged(); // (re)set validation messages now
   }
 
   onValueChanged(data?: any) {
     if (!this.feedbackForm) { return; }
     const form = this.feedbackForm;
     for (const field in this.formErrors) {
-      if (this.formErrors.hasOwnProperty(field)) {
-        // clear previous error message (if any)
-        this.formErrors[field] = '';
-        const control = form.get(field);
-        if (control && control.dirty && !control.valid) {
-          const messages = this.validationMessages[field];
-          for (const key in control.errors) {
-            if (control.errors.hasOwnProperty(key)) {
-              this.formErrors[field] += messages[key] + ' ';
-            }
-          }
+      // clear previous error message (if any)
+      this.formErrors[field] = '';
+      const control = form.get(field);
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key in control.errors) {
+          this.formErrors[field] += messages[key] + ' ';
         }
       }
     }
   }
 
   onSubmit() {
+
+    this.submitFlag = true;
     this.feedback = this.feedbackForm.value;
+    this.feedbackservice.submitFeedback(this.feedback).subscribe(confirm => {
+      this.feedbackConfirm = confirm; this.confirmFlag = true;
+    });
+
     console.log(this.feedback);
     this.feedbackForm.reset({
       firstname: '',
@@ -93,5 +115,10 @@ export class ContactComponent implements OnInit {
       contacttype: 'None',
       message: ''
     });
+
+    setTimeout(() => {
+      this.submitFlag = false; this.confirmFlag = false; },
+      5000
+    );
   }
 }
