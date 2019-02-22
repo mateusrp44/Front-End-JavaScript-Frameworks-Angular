@@ -24,13 +24,15 @@ import { from } from 'rxjs';
 export class MenuComponent implements OnInit {
   dishes: Dish[] = DISHES;
   selectedDish: Dish;
+  errMess: string;
 
   constructor(
     private dishservice: DishService,
     @Inject('BaseURL') public BaseURL) { }
 
   ngOnInit() {
-    this.dishservice.getDishes()./*(Promise)then*//*Observable->*/subscribe(dishes => this.dishes = dishes);
+    this.dishservice.getDishes()/*Promise -> then*//*Observable->*/.subscribe(dishes => this.dishes = dishes,
+      errmess => this.errMess = <any>errmess);
   }
 
   onSelect(dish: Dish) {

@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule, MatFormFieldModule, MatInputModule, MatCheckboxModule } from '@angular/material';
 import { HttpClientModule } from '@angular/common/http';
 import { RestangularModule, Restangular } from 'ngx-restangular';
+import { MatRadioModule } from '@angular/material/radio';
 
 import 'hammerjs';
 
@@ -70,6 +71,7 @@ import { HighlightDirective } from './directives/highlight.directive';
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatSliderModule,
+    MatRadioModule,
     HttpClientModule,
     RestangularModule.forRoot(RestangularConfigFactory)
   ],
