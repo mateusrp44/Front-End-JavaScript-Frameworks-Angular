@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { PROMOTIONS } from '../shared/promotions';
 import { Promotion } from '../shared/promotion';
-import { baseURL } from '../shared/baseurl';
+import { BaseURL } from '../shared/baseurl';
 import { RestangularConfigFactory } from '../shared/restConfig';
 
 import { RestangularModule, Restangular } from 'ngx-restangular';
@@ -18,11 +18,11 @@ import { map, catchError } from 'rxjs/operators';
 
 export class PromotionService
 {
-  constructor(/*private http: HttpClient,*/ private restangular: Restangular) {}
+  constructor(private http: HttpClient, private restangular: Restangular) {}
 
   getPromotions(): /*Promise*/Observable<Promotion[]> {
-    /*Restangular*/ return this.restangular.all('promotions').getList().pipe(catchError(error => error));
-    /*HTTP*/ //return this.http.get<Promotion[]>(baseURL + 'promotions');
+    /*Restangular*/ //return this.restangular.all('promotions').getList().pipe(catchError(error => error));
+    /*HTTP*/ return this.http.get<Promotion[]>(BaseURL + 'promotions');
     /*Observable*/ //return of(PROMOTIONS).pipe(delay(2000));
     /*Promise*//*return new Promise(resolve => {
       //Simulate server latency with 2 second delay
@@ -30,9 +30,9 @@ export class PromotionService
     });*/
   }
 
-  getPromotion(id: number): /*Promise*/Observable<Promotion> {
-    /*Restangular*/ return this.restangular.one('promotions', id).get().pipe(catchError(error => error));
-    /*HTTP*/ //return this.http.get<Promotion>(baseURL + 'promotions/' + id);
+  getPromotion(id: string): /*Promise*/Observable<Promotion> {
+    /*Restangular*/ //return this.restangular.one('promotions', id).get().pipe(catchError(error => error));
+    /*HTTP*/ return this.http.get<Promotion>(BaseURL + 'promotions/' + id);
     /*Observable*/ //return of(PROMOTIONS.filter((promotion) => (promotion.id === id))[0]).pipe(delay(2000));
     /*Promise*//*return new Promise(resolve => {
       //Simulate server latency with 2 second delay
@@ -41,8 +41,8 @@ export class PromotionService
   }
 
   getFeaturedPromotion(): /*Promise*/Observable<Promotion> {
-    /*Restangular*/ return this.restangular.all('promotions').getList({featured: true}).pipe(map(promotions => promotions[0])).pipe(catchError(error => error));
-    /*HTTP*/ //return this.http.get<Promotion[]>(baseURL + 'promotions?featured=true').pipe(map(promotions => promotions[0]));
+    /*Restangular*/ //return this.restangular.all('promotions').getList({featured: true}).pipe(map(promotions => promotions[0])).pipe(catchError(error => error));
+    /*HTTP*/ return this.http.get<Promotion[]>(BaseURL + 'promotions?featured=true').pipe(map(promotions => promotions[0]));
     /*Observable*/ //return of(PROMOTIONS.filter((promotion) => promotion.featured)[0]).pipe(delay(2000));
     /*Promise*//*return new Promise(resolve => {
       //Simulate server latency with 2 second delay

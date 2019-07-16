@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-
 import { Feedback } from '../shared/feedback';
 
 import { Observable } from 'rxjs';
-import { RestangularModule, Restangular } from 'ngx-restangular';
+import { map, catchError } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BaseURL } from '../shared/baseurl';
+import { ProcessHTTPMsgService } from './process-httpmsg.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeedbackService {
 
-  constructor(private restangular: Restangular) { }
+  constructor(private http: HttpClient,
+    private processHTTPMsgService: ProcessHTTPMsgService) { }
 
   submitFeedback(feedback: Feedback): Observable<Feedback> {
-    return this.restangular.all('feedback').post(feedback);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+    return this.http.post<Feedback>(BaseURL + 'feedback/', feedback, httpOptions)
+    .pipe(catchError(this.processHTTPMsgService.handleError));
   }
 }

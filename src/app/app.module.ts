@@ -14,7 +14,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule, MatFormFieldModule, MatInputModule, MatCheckboxModule } from '@angular/material';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RestangularModule, Restangular } from 'ngx-restangular';
 import { MatRadioModule } from '@angular/material/radio';
 
@@ -29,14 +29,18 @@ import { AboutComponent } from './about/about.component';
 import { HomeComponent } from './home/home.component';
 import { ContactComponent } from './contact/contact.component';
 import { LoginComponent } from './login/login.component';
-import { baseURL } from './shared/baseurl';
+import { BaseURL } from './shared/baseurl';
 import { RestangularConfigFactory } from './shared/restConfig';
 import { DishService } from './services/dish.service';
 import { PromotionService } from './services/promotion.service';
 import { LeaderService } from './services/leader.service';
-import { ProcessHttpmsgService } from './services/process-httpmsg.service';
+import { ProcessHTTPMsgService } from './services/process-httpmsg.service';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { HighlightDirective } from './directives/highlight.directive';
+import { FavoritesComponent } from './favorites/favorites.component';
+import { FeedbackService } from './services/feedback.service';
+import { AuthService } from './services/auth.service';
+import { AuthInterceptor, UnauthorizedInterceptor } from './services/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -49,7 +53,8 @@ import { HighlightDirective } from './directives/highlight.directive';
     HomeComponent,
     ContactComponent,
     LoginComponent,
-    HighlightDirective
+    HighlightDirective,
+    FavoritesComponent
   ],
   imports: [
     BrowserModule,
@@ -73,14 +78,27 @@ import { HighlightDirective } from './directives/highlight.directive';
     MatSliderModule,
     MatRadioModule,
     HttpClientModule,
-    RestangularModule.forRoot(RestangularConfigFactory)
+    RestangularModule.forRoot(RestangularConfigFactory),
   ],
   providers: [
     DishService,
     PromotionService,
     LeaderService,
-    {provide: 'BaseURL', useValue: baseURL},
-    ProcessHttpmsgService
+    {provide: 'BaseURL', useValue: BaseURL},
+    ProcessHTTPMsgService,
+    FeedbackService,
+    AuthService,
+    FavoritesComponent,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedInterceptor,
+      multi: true
+    }
   ],
     entryComponents: [
       LoginComponent

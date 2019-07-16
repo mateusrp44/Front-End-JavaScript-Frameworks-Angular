@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { HttpErrorResponse } from '@angular/common/http';
 
-import { Observable, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
-
-export class ProcessHttpmsgService {
+export class ProcessHTTPMsgService {
 
   constructor() { }
 
@@ -17,15 +15,10 @@ export class ProcessHttpmsgService {
 
     if (error.error instanceof ErrorEvent) {
       errMsg = error.error.message;
+    } else {
+      errMsg = `${error.status} - ${error.statusText || ''} ${error.message}`;
     }
-    else {
-      errMsg = `${error.status} - ${error.statusText || ''} ${error.error}`;
-    }
-    return throwError(errMsg);
-  }
 
-  public extractData(res: Response) {
-    let body = res.json();
-    return body || {};
+    return throwError(errMsg);
   }
 }

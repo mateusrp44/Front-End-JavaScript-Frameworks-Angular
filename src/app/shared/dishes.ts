@@ -2,9 +2,9 @@ import { Dish } from './dish';
 
 export const DISHES: Dish[] = [
     {
-        id: 0,
+        _id: '0',
         name: 'Uthappizza',
-        image: '/assets/images/uthappizza.png',
+        image: 'assets/images/uthappizza.png',
         category: 'mains',
         label: 'Hot',
         price: '4.99',
@@ -45,9 +45,9 @@ export const DISHES: Dish[] = [
         ]
     },
     {
-        id: 1,
+        _id: '1',
         name: 'Zucchipakoda',
-        image: '/assets/images/zucchipakoda.png',
+        image: 'assets/images/zucchipakoda.png',
         category: 'appetizer',
         label: '',
         price: '1.99',
@@ -87,9 +87,9 @@ export const DISHES: Dish[] = [
         ]
     },
     {
-        id: 2,
+        _id: '2',
         name: 'Vadonut',
-        image: '/assets/images/vadonut.png',
+        image: 'assets/images/vadonut.png',
         category: 'appetizer',
         label: 'New',
         price: '1.99',
@@ -129,9 +129,9 @@ export const DISHES: Dish[] = [
         ]
     },
     {
-        id: 3,
+        _id: '3',
         name: 'ElaiCheese Cake',
-        image: '/assets/images/elaicheesecake.jpg',
+        image: 'assets/images/elaicheesecake.jpg',
         category: 'dessert',
         label: '',
         price: '2.99',
